@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(couchmobile)
+project(couchmobile_description)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -8,7 +8,7 @@ project(couchmobile)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  urdf
+    #urdf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -132,7 +132,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/couchmobile_node.cpp)
-add_executable(parser src/parser.cpp)
+#add_executable(parser src/parser.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -148,7 +148,7 @@ add_executable(parser src/parser.cpp)
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(parser ${catkin_LIBRARIES})
+#target_link_libraries(parser ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -205,6 +205,6 @@ target_link_libraries(parser ${catkin_LIBRARIES})
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
-add_executable(state_publisher src/state_publisher.cpp)
-target_link_libraries(state_publisher ${catkin_LIBRARIES})
+#include_directories(include ${catkin_INCLUDE_DIRS})
+#add_executable(state_publisher src/state_publisher.cpp)
+#target_link_libraries(state_publisher ${catkin_LIBRARIES})
