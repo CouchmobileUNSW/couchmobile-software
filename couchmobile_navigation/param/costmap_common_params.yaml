@@ -22,7 +22,7 @@ obstacle_layer:
 
     laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: urg_node, marking: true, clearing: true}
 
-    realsense_camera: {sensor_frame: camera_link, data_type: PointCloud2, topic: camera/depth_registered/points, expected_update_rate: 0.1, marking: true, clearing: true}
+    realsense_camera: {sensor_frame: camera_link, data_type: PointCloud2, topic: camera/depth_registered/points, expected_update_rate: 50, marking: true, clearing: true}
 #robot_radius: ir_of_robot
 
 inflation_layer:
