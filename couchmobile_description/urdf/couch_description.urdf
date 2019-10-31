@@ -74,7 +74,7 @@
             <material name="grey"/>
         </visual>
     </link>
-
+    <!-- LASER DEFINITION -->
     <joint name="pole_to_laser" type="fixed">
         <parent link="pole"/>
         <child link="laser"/>
@@ -141,37 +141,81 @@
     </sensor>
 </gazebo>
 
+<!-- CAMERA DEFINITION -->
 
-<joint name="pole_to_color" type="fixed">
-    <parent link="pole"/>
-    <child link="camera_color_optical_frame"/>
-    <origin xyz="0 0 2.2" rpy="0 -1.57 0" />
-    <axis xyz="0 0 1" />
-</joint>
+    <joint name="pole_to_color" type="fixed">
+        <parent link="pole"/>
+        <child link="camera_color_optical_frame"/>
+        <origin xyz="0 0 2.2" rpy="0 -1.57 0" />
+        <axis xyz="0 0 1" />
+    </joint>
 
-<link name="camera_color_optical_frame">
-    <visual>
-        <geometry>
-            <box size="0.1 0.1 0.1"/>
-        </geometry>
-        <material name="black"/>
-    </visual>
-</link>
+    <link name="camera_color_optical_frame">
+        <visual>
+            <geometry>
+                <box size="0.1 0.1 0.1"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+    </link>
 
-<joint name="pole_to_depth" type="fixed">
-    <parent link="pole"/>
-    <child link="camera_link"/>
-    <origin xyz="0 0 2.2" rpy="1.57 3.14 1.57" />
-    <axis xyz="0 0 1" />
-</joint>
+    <joint name="pole_to_depth" type="fixed">
+        <parent link="pole"/>
+        <child link="camera_link"/>
+        <origin xyz="0 0 2.2" rpy="1.57 3.14 1.57" />
+        <axis xyz="0 0 1" />
+    </joint>
 
-<link name="camera_link">
-    <visual>
-        <geometry>
-            <box size="0.1 0.1 0.1"/>
-        </geometry>
-        <material name="black"/>
-    </visual>
-</link>
+    <link name="camera_link">
+        <visual>
+            <geometry>
+                <box size="0.1 0.1 0.1"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+    </link>
+
+<!-- CAMERA SIMULATION -->
+
+<!-- IMU DEFINITION -->
+    <link name="imu_link">
+        <visual>
+            <geometry>
+                <box size="0.2 0.1 0.002"/>
+            </geometry>
+        </visual>
+        <inertial>
+            <mass value="0.02"/>
+        </inertial>
+    </link>
+
+    <joint name="base_to_imu" type="fixed">
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <axis xyz="0 0 0" />
+    </joint>
+<!-- IMU SIMULATION -->
+
+    <gazebo reference="imu_link">
+        <gravity>true</gravity>
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <visualize>true</visualize>
+            <topic>__default_topic__</topic>
+            <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+                <topicName>imu</topicName>
+                <bodyName>imu_link</bodyName>
+                <updateRateHZ>10.0</updateRateHZ>
+                <gaussianNoise>0.0</gaussianNoise>
+                <xyzOffset>0 0 0</xyzOffset>
+                <rpyOffset>0 0 0</rpyOffset>
+                <frameName>imu_link</frameName>
+            </plugin>
+            <pose>0 0 0 0 0 0</pose>
+        </sensor>
+    </gazebo>
+
 
 </robot>
