@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro">
-    <xacro:property name="wheel_r" value="0.152"/>
+    <xacro:property name="wheel_r" value="0.0716"/>
     <xacro:property name="wheel_l" value="0.0254"/>
     <xacro:property name="wheel_m" value="0.3"/>
     <xacro:property name="PI" value="3.14159265359"/>
@@ -35,5 +35,28 @@
                     izz="${1/12*wheel_m*(3*wheel_r**2+wheel_l**2)}"/>
             </inertial>
         </link>
+    </xacro:macro>
+    <xacro:macro name="wheel_transmission" params="prefix parent">
+        <transmission name="${prefix}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix}_wheel_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="${parent}_to_${prefix}_wheel">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="wheel_coupling" params="parent child">
+        <transmission name="${parent}_to_${child}_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${parent}_to_${child}_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="${parent}_to_${child}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
     </xacro:macro>
 </robot>
