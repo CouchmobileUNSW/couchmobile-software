@@ -6,7 +6,7 @@
     <xacro:property name="PI" value="3.14159265359"/>
 
     <xacro:macro name="wheel" params="prefix parent *origin">
-        <joint name="${parent}_to_${prefix}_wheel" type="fixed">
+        <joint name="${parent}_to_${prefix}_wheel" type="continuous">
             <parent link="${parent}"/>
             <child link="${prefix}_wheel"/>
             <xacro:insert_block name="origin"/>
@@ -14,20 +14,20 @@
 
         <link name="${prefix}_wheel">
             <visual>
-                <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+                <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
                 <geometry>
                     <cylinder radius="${wheel_r}" length="${wheel_l}"/>
                 </geometry>
                 <material name="red"/>
             </visual>
             <collision>
-                <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+                <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
                 <geometry>
                     <cylinder radius="${wheel_r}" length="${wheel_l}"/>
                 </geometry>
             </collision>
             <inertial>
-                <origin xyz="0 0 0" rpy="${PI/2} 0 0"/>
+                <origin xyz="0 0 0" rpy="0 ${PI/2} 0"/>
                 <mass value="${wheel_m}"/>
                 <inertia
                     ixx="${1/2*wheel_m*wheel_r**2}" ixy="0.0" ixz="0.0"
@@ -35,6 +35,16 @@
                     izz="${1/12*wheel_m*(3*wheel_r**2+wheel_l**2)}"/>
             </inertial>
         </link>
+
+        <gazebo reference="${prefix}_wheel">
+            <mu1 value = "200.0"/>
+            <mu2 value = "100.0"/>
+            <kp value="1000000.0" />
+            <kd value="1.0" />
+            <fdir1 value="1 0 0"/>
+            <material>Gazebo/Grey/</material>
+            <selfCollide>false</selfCollide>
+        </gazebo>
     </xacro:macro>
     <xacro:macro name="wheel_transmission" params="prefix parent">
         <transmission name="${prefix}_wheel_trans">
@@ -48,13 +58,13 @@
         </transmission>
     </xacro:macro>
 
-    <xacro:macro name="wheel_coupling" params="parent child">
-        <transmission name="${parent}_to_${child}_trans">
+    <xacro:macro name="wheel_coupling" params="parent_wheel child_wheel parent">
+        <transmission name="${parent_wheel}_to_${child_wheel}_trans">
             <type>transmission_interface/SimpleTransmission</type>
-            <actuator name="${parent}_to_${child}_motor">
+            <actuator name="${parent_wheel}_to_${child_wheel}_motor">
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
-            <joint name="${parent}_to_${child}">
+            <joint name="${parent}_to_${child_wheel}">
                 <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
             </joint>
         </transmission>

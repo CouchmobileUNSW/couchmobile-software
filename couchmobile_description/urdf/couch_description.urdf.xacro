@@ -72,35 +72,35 @@
     <xacro:include filename="$(find couchmobile_description)/urdf/wheel.macro.xacro"/>
     
     <xacro:wheel prefix="RM" parent="base_link">
-        <origin xyz="0 ${wheel_separation/2} 0" rpy="0 0 0" />   
+        <origin xyz="0 ${wheel_separation/2} 0" rpy="0 0 ${PI/2}" />   
     </xacro:wheel>
     
-    <xacro:wheel prefix="RF" parent="RM_wheel">
-        <origin xyz="0.2 0 0" rpy="0 0 0" />   
+    <xacro:wheel prefix="RF" parent="base_link">
+        <origin xyz="0.2 ${wheel_separation/2} 0" rpy="0 0 ${PI/2}" />   
     </xacro:wheel>
 
-    <xacro:wheel prefix="RB" parent="RM_wheel">
-        <origin xyz="-0.2 0 0" rpy="0 0 0" />   
+    <xacro:wheel prefix="RB" parent="base_link">
+        <origin xyz="-0.2 ${wheel_separation/2} 0" rpy="0 0 ${PI/2}" />   
     </xacro:wheel>
 
     <xacro:wheel prefix="LM" parent="base_link">
-        <origin xyz="0 -${wheel_separation/2} 0" rpy="0 0 0" />   
+        <origin xyz="0 -${wheel_separation/2} 0" rpy="0 0 ${PI/2}" />   
     </xacro:wheel>
     
-    <xacro:wheel prefix="LF" parent="LM_wheel">
-        <origin xyz="0.2 0 0" rpy="0 0 0" />   
+    <xacro:wheel prefix="LF" parent="base_link">
+        <origin xyz="0.2 -${wheel_separation/2} 0" rpy="0 0 ${PI/2}" />   
     </xacro:wheel>
 
-    <xacro:wheel prefix="LB" parent="LM_wheel">
-        <origin xyz="-0.2 0 0" rpy="0 0 0" />   
+    <xacro:wheel prefix="LB" parent="base_link">
+        <origin xyz="-0.2 -${wheel_separation/2} 0" rpy="0 0 ${PI/2}" />   
     </xacro:wheel>
 
     <xacro:wheel_transmission prefix="LM" parent="base_link"/>
     <xacro:wheel_transmission prefix="RM" parent="base_link"/>
-    <xacro:wheel_coupling parent="LM_wheel" child="LF_wheel"/>
-    <xacro:wheel_coupling parent="LM_wheel" child="LB_wheel"/>
-    <xacro:wheel_coupling parent="RM_wheel" child="RF_wheel"/>
-    <xacro:wheel_coupling parent="RM_wheel" child="RB_wheel"/>
+    <xacro:wheel_coupling parent_wheel="LM_wheel" child_wheel="LF_wheel" parent="base_link"/>
+    <xacro:wheel_coupling parent_wheel="LM_wheel" child_wheel="LB_wheel" parent="base_link"/>
+    <xacro:wheel_coupling parent_wheel="RM_wheel" child_wheel="RF_wheel" parent="base_link"/>
+    <xacro:wheel_coupling parent_wheel="RM_wheel" child_wheel="RB_wheel" parent="base_link"/>
 
     <joint name="seating_to_pole" type="fixed">
         <parent link="seating"/>
@@ -239,29 +239,25 @@
     </gazebo>
 
 <!-- DRIVE SIMULATION -->
-<!--
+
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-            <robotNamespace>/</robotNamespace>
-            <controlPeriod>0.024</controlPeriod>
-        </plugin>
-    </gazebo>
--->
-    <gazebo>
-        <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
-            <updateRate>100</updateRate>
-            <robotNamespace>/</robotNamespace>
-            <leftFrontJoint>LF_wheel</leftFrontJoint>
-            <rightFrontJoint>RF_wheel</rightFrontJoint>
-            <leftRearJoint>LB_wheel</leftRearJoint>
-            <rightRearJoint>RB_wheel</rightRearJoint>
-            <wheelSeparation>${wheel_separation}</wheelSeparation>
-            <wheelDiameter>0.154</wheelDiameter>
-            <robotBaseFrame>base_link</robotBaseFrame>
-            <torque>20</torque>
-            <topicName>cmd_vel</topicName>
-            <broadcastTF>true</broadcastTF>
         </plugin>
     </gazebo>
 
+    <gazebo>
+        <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>${controller_fps}</updateRate>
+            <leftJoint>base_link_to_LM_wheel</leftJoint>
+            <rightJoint>base_link_to_RM_wheel</rightJoint>
+            <wheelSeparation>0.60</wheelSeparation>
+            <wheelDiameter>0.154</wheelDiameter>
+            <torque>50</torque>
+            <commandTopic>cmd_vel</commandTopic>
+            <odometryTopic>odom</odometryTopic>
+            <odometryFrame>odom</odometryFrame>
+            <robotBaseFrame>base_link</robotBaseFrame>
+        </plugin>
+    </gazebo>
 </robot>

@@ -1,8 +1,4 @@
 <launch>
-	<arg name="model" default="$(find couchmobile_description)/urdf/couch_description.urdf"/>
-
-	<param name="robot_description" command="cat $(arg model)"/>
-
 	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
 	    <param name="use_gui" value="FALSE"/>
     </node>
@@ -18,6 +14,7 @@
         <arg name="debug" value="false"/>
     </include>
 
-    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find couchmobile_description)/urdf/couch_description.urdf -urdf -model couch"/>
-
+    <include file="$(find couchmobile_gazebo)/launch/spawn_couch.launch">
+    </include>
 </launch>
+

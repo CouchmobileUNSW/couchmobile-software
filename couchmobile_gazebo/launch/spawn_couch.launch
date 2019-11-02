@@ -1,0 +1,25 @@
+<launch>
+    <param
+        name="robot_description"
+        command="$(find xacro)/xacro '$(find
+couchmobile_description)/urdf/couch_description.urdf.xacro'"
+    />  
+    <node
+        name="spawn_model"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        args="-urdf -param robot_description -model couch"
+    /> 
+
+    <rosparam command="load"
+              file="$(find couchmobile_gazebo)/params/diff_drive.yaml"
+              ns="diff_drive_controller"  /> 
+
+    <node name="couch_controller_spawner" pkg="controller_manager" type="spawner"
+        output="screen" args="diff_drive_controller"/>
+
+    <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+        <param name="default_topic" value="/diff_drive_controller/cmd_vel"/>
+    </node>	
+
+</launch>
