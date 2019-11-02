@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="wheel_r" value="0.152"/>
+    <xacro:property name="wheel_l" value="0.0254"/>
+    <xacro:property name="wheel_m" value="0.3"/>
+
+    <xacro:macro name="wheel" params="prefix parent *origin">
+        <joint name="${parent}_to_${prefix}_wheel" type="fixed">
+            <parent link="${parent}"/>
+            <child link="${prefix}_wheel"/>
+            <xacro:insert_block name="origin"/>
+        </joint>
+
+        <link name="${prefix}_wheel">
+            <visual>
+                <xacro:insert_block name="origin"/>
+                <geometry>
+                    <cylinder radius="${wheel_r}" length="${wheel_l}"/>
+                </geometry>
+                <material name="red"/>
+            </visual>
+            <collision>
+                <xacro:insert_block name="origin"/>
+                <geometry>
+                    <cylinder radius="${wheel_r}" length="${wheel_l}"/>
+                </geometry>
+            </collision>
+            <inertial>
+                <xacro:insert_block name="origin"/>
+                <mass value="${wheel_m}"/>
+                <inertia
+                    ixx="${1/2*wheel_m*wheel_r**2}" ixy="0.0" ixz="0.0"
+                    iyy="${1/12*wheel_m*(3*wheel_r**2+wheel_l**2)}" iyz="0.0"
+                    izz="${1/12*wheel_m*(3*wheel_r**2+wheel_l**2)}"/>
+            </inertial>
+        </link>
+    </xacro:macro>
+</robot>
