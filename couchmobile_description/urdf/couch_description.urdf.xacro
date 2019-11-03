@@ -97,10 +97,10 @@
 
     <xacro:wheel_transmission prefix="LM" parent="base_link"/>
     <xacro:wheel_transmission prefix="RM" parent="base_link"/>
-    <xacro:wheel_coupling parent_wheel="LM_wheel" child_wheel="LF_wheel" parent="base_link"/>
-    <xacro:wheel_coupling parent_wheel="LM_wheel" child_wheel="LB_wheel" parent="base_link"/>
-    <xacro:wheel_coupling parent_wheel="RM_wheel" child_wheel="RF_wheel" parent="base_link"/>
-    <xacro:wheel_coupling parent_wheel="RM_wheel" child_wheel="RB_wheel" parent="base_link"/>
+    <xacro:wheel_transmission prefix="LF" parent="base_link"/>
+    <xacro:wheel_transmission prefix="RF" parent="base_link"/>
+    <xacro:wheel_transmission prefix="LB" parent="base_link"/>
+    <xacro:wheel_transmission prefix="RB" parent="base_link"/>
 
     <joint name="seating_to_pole" type="fixed">
         <parent link="seating"/>
@@ -244,20 +244,36 @@
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
         </plugin>
     </gazebo>
-
     <gazebo>
         <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
             <alwaysOn>true</alwaysOn>
             <updateRate>${controller_fps}</updateRate>
-            <leftJoint>base_link_to_LM_wheel</leftJoint>
-            <rightJoint>base_link_to_RM_wheel</rightJoint>
+            <leftJoint>base_link_to_LM_wheel base_link_to_LF_wheel base_link_to_LB_wheel</leftJoint>
+            <rightJoint>base_link_to_RM_wheel base_link_to_RF_wheel base_link_to_RB_wheel</rightJoint>
             <wheelSeparation>0.60</wheelSeparation>
             <wheelDiameter>0.154</wheelDiameter>
-            <torque>50</torque>
+            <torque>20</torque>
             <commandTopic>cmd_vel</commandTopic>
-            <odometryTopic>odom</odometryTopic>
-            <odometryFrame>odom</odometryFrame>
+            <odometryTopic>odom_truth</odometryTopic>
+            <odometryFrame>odom_truth</odometryFrame>
             <robotBaseFrame>base_link</robotBaseFrame>
         </plugin>
     </gazebo>
+<!--
+    <gazebo>
+        <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+            <updateRate>100.0</updateRate>
+            <leftFrontJoint>LF_wheel</leftFrontJoint>
+            <rightFrontJoint>RF_wheel</rightFrontJoint>
+            <leftRearJoint>LB_wheel</leftRearJoint>
+            <rightRearJoint>RB_wheel</rightRearJoint>
+            <wheelSeparation>0.6</wheelSeparation>
+            <wheelDiameter>0.154</wheelDiameter>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <torque>20</torque>
+            <topicName>cmd_vel</topicName>
+            <broadcastTF>false</broadcastTF>
+        </plugin>
+    </gazebo>
+    -->
 </robot>
