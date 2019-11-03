@@ -13,10 +13,12 @@
     <rosparam command="load"
               file="$(find couchmobile_gazebo)/params/diff_drive.yaml"
               ns="diff_drive_controller"  /> 
-
-    <node name="couch_controller_spawner" pkg="controller_manager" type="spawner" output="screen" args="diff_drive_controller">
-        <remap from="/diff_drive_controller/cmd_vel" to="/cmd_vel"/>
+    
+    <node name="couch_controller_spawner" pkg="controller_manager"
+type="spawner" output="screen" args="diff_drive_controller">
     </node>
+    <node name="cmd_vel_pipe" pkg="topic_tools" type="relay"
+args="/cmd_vel diff_drive_controller/cmd_vel"/>
 <!--
     <rosparam command="load"
               file="$(find couchmobile_gazebo)/params/skid_drive.yaml"
@@ -28,7 +30,7 @@ type="spawner" output="screen" args="diff_drive_controller">
     </node>
 -->
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
-        <param name="default_topic" value="/diff_drive_controller/cmd_vel"/>
+        <param name="default_topic" value="/cmd_vel"/>
     </node>	
 
 </launch>
