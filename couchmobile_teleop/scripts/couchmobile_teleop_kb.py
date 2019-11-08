@@ -29,6 +29,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import rospy
+import time
+from math import exp
 from geometry_msgs.msg import Twist
 import sys, select, os
 if os.name == 'nt':
@@ -99,8 +101,9 @@ def getKey():
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
     return key
 
-def vels(target_linear_vel, target_angular_vel):
-    return "currently:\tlinear vel %s\t angular vel %s " % (target_linear_vel,target_angular_vel)
+def vels(target_linear_vel, target_angular_vel, actual_linear_vel,
+        actual_angular_vel):
+    return "desired:\tlinear vel %s\t angular vel %s \nactual:\tlinear vel %s\tangular vel %s " % (target_linear_vel,target_angular_vel, actual_linear_vel, actual_angular_vel)
 
 def makeSimpleProfile(output, input, slop):
     if input > output:
@@ -111,6 +114,18 @@ def makeSimpleProfile(output, input, slop):
         output = input
 
     return output
+
+def exponentialProfile(currVal, desiredVal, dt, tau, maxStep):
+    # Parses input through an exponential function to smooth steps
+    # tau is time constant (s)
+    # maxStep is equivalent step over 1s
+    delta = 1.0 - exp(-dt/tau)
+    delta = delta * (desiredVal - currVal)
+    if delta < maxStep*dt:
+        delta = -maxStep*dt
+    elif delta > maxStep*dt:
+        delta = maxStep*dt
+    return currVal + delta
 
 def constrain(input, low, high):
     if input < low:
@@ -156,6 +171,7 @@ if __name__=="__main__":
     target_angular_vel  = 0.0
     control_linear_vel  = 0.0
     control_angular_vel = 0.0
+    prevTime = time.time();
 
     try:
         print(msg)
@@ -165,39 +181,47 @@ if __name__=="__main__":
             if key == 'w' :
                 target_linear_vel = checkLinearLimitVelocity(target_linear_vel + LIN_VEL_STEP_SIZE)
                 status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                print(vels(target_linear_vel,target_angular_vel,control_linear_vel,control_angular_vel))
             elif key == 'x' :
                 target_linear_vel = checkLinearLimitVelocity(target_linear_vel - LIN_VEL_STEP_SIZE)
                 status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                print(vels(target_linear_vel,target_angular_vel,control_linear_vel,control_angular_vel))
             elif key == 'a' :
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel + ANG_VEL_STEP_SIZE)
                 status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                print(vels(target_linear_vel,target_angular_vel,control_linear_vel,control_angular_vel))
             elif key == 'd' :
                 target_angular_vel = checkAngularLimitVelocity(target_angular_vel - ANG_VEL_STEP_SIZE)
                 status = status + 1
-                print(vels(target_linear_vel,target_angular_vel))
+                print(vels(target_linear_vel,target_angular_vel,control_linear_vel,control_angular_vel))
             elif key == ' ' or key == 's' :
                 target_linear_vel   = 0.0
                 control_linear_vel  = 0.0
                 target_angular_vel  = 0.0
                 control_angular_vel = 0.0
-                print(vels(target_linear_vel, target_angular_vel))
+                print(vels(target_linear_vel, target_angular_vel,control_linear_vel,control_angular_vel))
             else:
                 if (key == '\x03'):
                     break
 
+            print(vels(target_linear_vel, target_angular_vel,control_linear_vel,control_angular_vel))
             if status == 20 :
                 print(msg)
                 status = 0
 
             twist = Twist()
+            tau = 0.5
 
-            control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
+            dt = time.time() - prevTime
+            prevTime = time.time()
+            control_linear_vel = exponentialProfile(control_linear_vel,
+                    target_linear_vel, dt, tau, LIN_VEL_STEP_SIZE/2.0)
+            control_angular_vel = exponentialProfile(control_angular_vel,
+                    target_angular_vel, dt, tau, ANG_VEL_STEP_SIZE/2.0)
+            #control_linear_vel = makeSimpleProfile(control_linear_vel, target_linear_vel, (LIN_VEL_STEP_SIZE/2.0))
             twist.linear.x = control_linear_vel; twist.linear.y = 0.0; twist.linear.z = 0.0
 
-            control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
+            #control_angular_vel = makeSimpleProfile(control_angular_vel, target_angular_vel, (ANG_VEL_STEP_SIZE/2.0))
             twist.angular.x = 0.0; twist.angular.y = 0.0; twist.angular.z = control_angular_vel
 
             pub.publish(twist)

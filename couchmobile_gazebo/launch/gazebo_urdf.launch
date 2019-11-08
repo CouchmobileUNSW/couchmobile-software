@@ -1,0 +1,20 @@
+<launch>
+	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+	    <param name="use_gui" value="FALSE"/>
+    </node>
+
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="worlds/mud.world"/> <!-- Note: the world_name is with respect to GAZEBO_RESOURCE_PATH environmental variable -->
+        <arg name="paused" value="true"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+    </include>
+
+    <include file="$(find couchmobile_gazebo)/launch/spawn_couch.launch">
+    </include>
+</launch>
+
