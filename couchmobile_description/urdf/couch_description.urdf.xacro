@@ -4,6 +4,7 @@
 
 <!-- CONSTS -->
     <xacro:property name="PI" value="3.14159265359"/>
+    <xacro:property name="deg_to_rad" value="${PI/180}"/>
 
 <!-- ROBOT DIMENSIONS -->
     <xacro:property name="wheel_separation" value="0.60"/>
@@ -186,13 +187,17 @@
 
 <!-- CAMERA DEFINITION -->
 <!-- CAMERA SIMULATION -->
+<!--
     <xacro:include filename="$(find couchmobile_description)/urdf/realsense-d435.macro.xacro"/>
-    <!-- Create camera instance -->
     <xacro:sensor-d435 prefix="" parent="pole">
         <origin xyz="0 0 2.2" rpy="0 0 0" />   
     </xacro:sensor-d435>
+-->
 
-
+    <xacro:include filename="$(find realsense_gazebo_plugin)/urdf/d435.urdf.xacro"/>
+    <xacro:sensor_d435 parent="pole">
+        <origin xyz="0 0 1.5" rpy="0 0 0"/>
+    </xacro:sensor_d435>
 <!-- IMU DEFINITION -->
     <link name="imu_link">
         <visual>

@@ -154,11 +154,6 @@ aluminum peripherial evaluation case.
 <!-- **********************************************************-->
 <!-- GAZEBO DEFINITIONS ***************************************-->
 
-    <!-- Load plugin to the model ("robot" in urdf format)-->
-    <gazebo>
-        <plugin name="${prefix}d435" filename="librealsense_gazebo_plugin.so"/>
-        <!--<pose frame="">0 0 0.015 0 0 0</pose>-->
-    </gazebo>
 
     <!-- Load parameters to model's main link-->
     <gazebo reference="camera_link">
@@ -268,6 +263,31 @@ aluminum peripherial evaluation case.
             <update_rate>${ir_fps}</update_rate>
             <visualize>0</visualize>
         </sensor>
+    </gazebo>
+    
+<!-- Load plugin to the model ("robot" in urdf format)-->
+    <gazebo>
+        <plugin name="${prefix}d435" filename="librealsense_gazebo_plugin.so"/>
+        <depthUpdateRate>60.0</depthUpdateRate>
+      	<colorUpdateRate>60.0</colorUpdateRate>
+      	<infraredUpdateRate>60.0</infraredUpdateRate>
+      	<depthTopicName>depth/image_raw</depthTopicName>
+      	<depthCameraInfoTopicName>depth/camera_info</depthCameraInfoTopicName>
+      	<colorTopicName>color/image_raw</colorTopicName>
+      	<colorCameraInfoTopicName>color/camera_info</colorCameraInfoTopicName>
+      	<infrared1TopicName>infra1/image_raw</infrared1TopicName>
+      	<infrared1CameraInfoTopicName>infra1/camera_info</infrared1CameraInfoTopicName>
+      	<infrared2TopicName>infra2/image_raw</infrared2TopicName>
+      	<infrared2CameraInfoTopicName>infra2/camera_info</infrared2CameraInfoTopicName>
+      	<colorOpticalframeName>camera_color_optical_frame</colorOpticalframeName>
+      	<depthOpticalframeName>camera_depth_optical_frame</depthOpticalframeName>
+      	<infrared1OpticalframeName>camera_right_ir_optical_frame</infrared1OpticalframeName>
+      	<infrared2OpticalframeName>camera_left_ir_optical_frame</infrared2OpticalframeName>
+      	<rangeMinDepth>0.2</rangeMinDepth>
+      	<rangeMaxDepth>10.0</rangeMaxDepth>
+      	<pointCloud>false</pointCloud>
+      	<pointCloudTopicName>depth/points</pointCloudTopicName>
+      	<pointCloudCutoff>0.5</pointCloudCutoff>
     </gazebo>
 </xacro:macro>
 </robot>
