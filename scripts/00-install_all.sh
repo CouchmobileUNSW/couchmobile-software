@@ -7,7 +7,10 @@ cd ../../..
 if [ -d "src" ]; then
     # Create install lock
     touch install_lock
-    
+
+    sudo apt-get update
+    sudo apt-get upgrade -y
+
     # Call all install scripts
     for filename in $SCRIPTS_DIR/install*; do
         ( $filename )
@@ -16,7 +19,7 @@ if [ -d "src" ]; then
     # Remove install lock
     rm install_lock
 
-    if grep -Fxq "source $PWD/devel/setup.bash" ~/.bashrc then
+    if ! grep -Fxq "source $PWD/devel/setup.bash" ~/.bashrc ; then
         echo "source $PWD/devel/setup.bash" >> ~/.bashrc
     fi
 
